@@ -1,3 +1,3 @@
 <template>
-  <h1>About</h1>
+  <h1>404页面</h1>
 </template>

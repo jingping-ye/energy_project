@@ -8,8 +8,12 @@
   在 vite.config.ts 中配置
 
 ```ts
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
+
 export default defineConfig({
-  plugin: [vue()],
+  plugins: [vue()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
