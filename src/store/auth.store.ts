@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import type { LoginParams } from '@/api/user';
-import { login } from '@/api/user';
+import type { LoginParams } from '@/api/user.api';
+import { login } from '@/api/user.api';
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -32,8 +32,8 @@ export const useUserStore = defineStore('user', {
         this.menu = menulist;
         sessionStorage.setItem('token', token);
         sessionStorage.setItem('username', username);
-        sessionStorage.setItem('roles', roles);
-        sessionStorage.setItem('menu', menulist);
+        sessionStorage.setItem('roles', JSON.stringify(roles));
+        sessionStorage.setItem('menu', JSON.stringify(menulist));
       } catch (error) {
         console.log('error', error);
       }

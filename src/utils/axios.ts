@@ -32,7 +32,18 @@ service.interceptors.request.use(
  */
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    return response.data;
+    const { data } = response;
+    console.log('response', response);
+    // 以2开头，正常的响应数据
+    if (data.code.toString().startsWith('2')) {
+      return response.data;
+    } else {
+      ElMessage({
+        message: data.message,
+        type: 'error',
+      });
+      return Promise.reject(data);
+    }
   },
   (error: AxiosError) => {
     ElMessage({

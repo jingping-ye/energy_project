@@ -6,7 +6,7 @@
         <img :src="logo" alt="" class="logo__image" />
         <h1 class="logo__title">动力港能源管理平台</h1>
       </div>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" @keyup.enter.native="handleLogin">
         <el-form-item prop="username">
           <el-input prefix-icon="User" placeholder="请输入用户名" v-model="ruleForm.username"></el-input>
         </el-form-item>
@@ -30,7 +30,8 @@
 import logo from '@/assets/logo.png';
 import type { FormRules, FormInstance } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { useUserStore } from '@/store/auth.ts';
+import { useUserStore } from '@/store/auth.store';
+import { useRouter } from 'vue-router';
 
 // 获取表单实例
 const ruleFormRef = ref<FormInstance>();
@@ -93,13 +94,15 @@ const rules = reactive<FormRules<RuleForm>>({
  */
 
 const userStore = useUserStore();
+const router = useRouter();
 function handleLogin() {
   // ?. 可选链操作符
   // 报错：因为ruleFormRef可能为空
   // valid：是否所有表单验证通过了
-  ruleFormRef.value?.validate((valid: boolean) => {
+  ruleFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
-      userStore.login(ruleForm);
+      await userStore.login(ruleForm); // 使用await解决调用登录接口的异步问题
+      router.push('/');
     }
   });
 }

@@ -2,3 +2,37 @@
   margin: 0;
   padding: 0;
 }
+// html,
+// body {
+//   height: 100%;
+// }
+// #app {
+//   height: 100%;
+// }
+
+// 滚动条的组成部分
+// 滚动条-整体
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 6px;
+}
+
+// 滚动条-外层轨道
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+// 滚动条-可拖动部分
+::-webkit-scrollbar-thumb {
+  background-color: #0003;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  background-color: #0000004d;
+}

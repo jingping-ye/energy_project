@@ -12,22 +12,22 @@ const menulist = [
   },
   {
     name: '充电站管理',
-    url: '/chargingstation',
+    url: '/charging-station',
     icon: 'Lightning',
     children: [
       {
         name: '充电站监控',
-        url: '/chargingstation/monitor',
+        url: '/charging-station/monitor',
         icon: 'VideoCamera',
       },
       {
         name: '营收统计',
-        url: '/chargingstation/revenue',
+        url: '/charging-station/revenue',
         icon: 'DataAnalysis',
       },
       {
         name: '充电桩管理',
-        url: '/chargingstation/fault',
+        url: '/charging-station/pile',
         icon: 'Warning',
       },
     ],
@@ -39,22 +39,22 @@ const menulist = [
   },
   {
     name: '运营管理',
-    url: '/operations',
+    url: '/order',
     icon: 'Files',
     children: [
       {
         name: '订单管理',
-        url: '/operations/orders',
+        url: '/order',
         icon: 'DocumentCopy',
       },
       {
         name: '订单详情',
-        url: '/operations/detail',
+        url: '/order/detail',
         icon: 'Share',
       },
       {
         name: '计费管理',
-        url: '/operations/total',
+        url: '/order/total',
         icon: 'Money',
       },
     ],
@@ -66,12 +66,12 @@ const menulist = [
   },
   {
     name: '会员卡管理',
-    url: '/equipment',
+    url: '/membership',
     icon: 'Magnet',
   },
   {
     name: '招商管理',
-    url: '/document',
+    url: '/investment',
     icon: 'Document',
   },
   {
@@ -100,17 +100,17 @@ const menulist2 = [
     children: [
       {
         name: '充电站监控',
-        url: '/chargingstation/monitor',
+        url: '/charging-station/monitor',
         icon: 'VideoCamera',
       },
       {
         name: '营收统计',
-        url: '/chargingstation/revenue',
+        url: '/charging-station/revenue',
         icon: 'DataAnalysis',
       },
       {
         name: '充电桩管理',
-        url: '/chargingstation/fault',
+        url: '/charging-station/pile',
         icon: 'Warning',
       },
     ],
@@ -122,22 +122,22 @@ const menulist2 = [
   },
   {
     name: '运营管理',
-    url: '/operations',
+    url: '/order',
     icon: 'Files',
     children: [
       {
         name: '订单管理',
-        url: '/operations/orders',
+        url: '/order',
         icon: 'DocumentCopy',
       },
       {
         name: '订单详情',
-        url: '/operations/detail',
+        url: '/order/detail',
         icon: 'Share',
       },
       {
         name: '计费管理',
-        url: '/operations/total',
+        url: '/order/total',
         icon: 'Money',
       },
     ],
@@ -149,7 +149,7 @@ const menulist2 = [
   },
   {
     name: '会员卡管理',
-    url: '/equipment',
+    url: '/membership',
     icon: 'Magnet',
   },
   {

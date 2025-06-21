@@ -1,10 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router';
+import routesFixed from './bussiness.route';
 
 const routes: RouteRecordRaw[] = [
   {
     name: 'Home',
     path: '/',
-    component: () => import('@/layouts/DefaultLayout.vue'),
+    redirect: '/dashboard',
+    component: () => import('@/components/layout/DefaultLayout.vue'),
+    children: [...routesFixed],
   },
   {
     name: 'Login',

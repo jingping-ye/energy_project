@@ -8,6 +8,7 @@ import '@/styles/index.less'; // 引入所有样式
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import { createPinia } from 'pinia';
 import './mock';
+import '@/router/routeGuard';
 
 const app = createApp(App);
 
