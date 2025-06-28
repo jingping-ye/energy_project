@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Home',
     path: '/',
     redirect: '/dashboard',
-    component: () => import('@/components/layout/DefaultLayout.vue'),
+    component: () => import('@/components/layout/LayoutDefault.vue'),
     children: [...routesFixed],
   },
   {

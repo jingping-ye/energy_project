@@ -25,7 +25,7 @@ const menu = userStore.menu;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 10px 0px;
+  padding: 5px 0px;
   height: 50px;
   align-items: center;
   &__logo {

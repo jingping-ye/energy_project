@@ -8,7 +8,7 @@
     </template>
     <menu-item v-for="subItem in item.children" :key="subItem.url" :item="subItem"></menu-item>
   </el-sub-menu>
-  <el-menu-item :index="item.url" v-else>
+  <el-menu-item :index="item.url" v-else @click="clickMenuItem">
     <el-icon>
       <component :is="item.icon"></component>
     </el-icon>
@@ -32,5 +32,13 @@ const props = defineProps<Props>();
 const isShowSubMenu = computed(() => {
   return props.item.children?.length ?? 0 > 0;
 });
+
+import useTabStore from '@/store/tab.store';
+const tabStore = useTabStore();
+const { addTab, setActiveTab } = tabStore;
+function clickMenuItem() {
+  addTab(props.item);
+  setActiveTab(props.item.name, props.item.url);
+}
 </script>
 <style lang="less" scoped></style>
