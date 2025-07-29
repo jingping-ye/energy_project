@@ -1,3 +1,53 @@
+# 27 使用echarts实现数据可视化
+
+## 什么是数据可视化
+- 通过图表的形式展示数据
+
+## echarts
+```bash
+# 安装
+npm install echarts -S
+```
+
+## 使用
+```js
+import * as echarts from 'echarts';
+
+// 基于准备好的dom，初始化echarts实例
+var myChart = echarts.init(document.getElementById('main'));
+// 绘制图表
+myChart.setOption({
+  title: {
+    text: 'ECharts 入门示例'
+  },
+  tooltip: {},
+  xAxis: {
+    data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+  },
+  yAxis: {},
+  series: [
+    {
+      name: '销量',
+      type: 'bar',
+      data: [5, 20, 36, 10, 10, 20]
+    }
+  ]
+});
+```
+
+## 要点
+
+### vue中不提倡操作dom，如果要操作dom，使用ref
+
+### echarts初始化必须在mounted之后，也就是真实DOM挂载之后。setup相当于beforeCreate，只是创建了空白实例，尚未进行数据绑定。 
+
+- vue生命周期
+
+### ref 对象要放在函数外初始化，因为依赖于实例上下文
+
+
+## 代码
+```vue
 <template>
   <el-row>
     <el-col :span="18">
@@ -133,10 +183,10 @@
         </template>
         <el-row>
           <el-col :span="6">
-            <div ref="chartRef2" style="width: 100%; height: 400px"></div>
+            <div ref="chartRef" style="width: 100%; height: 400px"></div>
           </el-col>
           <el-col :span="18">
-            <div ref="chartRef" style="width: 100%; height: 400px"></div>
+            <div ref="chartRef2" style="width: 100%; height: 400px"></div>
           </el-col>
         </el-row>
       </el-card>
@@ -159,12 +209,8 @@ import money from "@/assets/money.png";
 import daily from "@/assets/daily.png";
 
 // utils
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref,onMounted } from "vue";
 import * as echarts from "echarts";
-
-// hooks
-import { useChart } from "@/hooks/useChart";
-import { Bottom } from "@element-plus/icons-vue";
 
 const commonFunc = [
   {
@@ -198,116 +244,35 @@ const commonFunc = [
     url: "",
   },
 ];
-
 // 基于准备好的dom，初始化echarts实例
 const chartRef = ref(null);
-const option1 = {
-  title: {
-    text: '电量统计',
-    textStyle:{
-      fontSize:14,
-    }
-  },
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {
-    data: ['充电量', '充电时长', '充电功率']
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: ['13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00','20:00','21:00']
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel:{
-      formatter:'{value} kw'
-    }
-  },
-  series: [
-    {
-      name: '充电量',
-      type: 'line',
-      smooth:true,
-      data: [20,50,30,70,60,80,40,60,50],
-      lineStyle:{
-        width:3,
-      },
-      itemStyle:{
-        color:"purple",
-        shadowBlur:3,
-        shadowColor:'rgba(0,255,0,0.5)'
-      }
-    },
-    {
-      name: '充电时长',
-      type: 'line',
-      smooth:true,
-      data: [40,60,50,80,70,90,60,70,80],
-      lineStyle:{
-        width:3,
-      },
-      itemStyle:{
-        color:"lightgreen",
-        shadowBlur:3,
-        shadowColor:'rgba(0,255,0,0.5)'
-      }
-    },
-    {
-      name: '充电功率',
-      type: 'line',
-      smooth:true,
-      data: [30,40,60,50,70,20,30,40,60],
-      lineStyle:{
-        width:3,
-      },
-      itemStyle:{
-        color:"skyblue",
-        shadowBlur:3,
-        shadowColor:'rgba(0,255,0,0.5)'
-      }
-    },
-  ]
-};
-useChart(chartRef, option1);
-
 const chartRef2 = ref(null);
-const option2 = {
-  // tooltip: {
-  //   trigger: "item",
-  // },
-  legend: {
-    bottom: 0,
-  },
-  series: [
-    {
-      type: "pie",
-      radius: ["50%", "70%"],
-      avoidLabelOverlap: false,
-      label: {
-        show: false,
-        position: "center",
-      },
-      emphasis: {
-        label: {
-          show:false,
-          fontSize: 40,
-          fontWeight: "bold",
-        },
-      },
-      labelLine: {
-        show: false,
-      },
-      data: [
-        { value: 1048, name: "充电桩",itemStyle:{color:'#4366b5'} },
-        { value: 735, name: "充电站" ,itemStyle:{color:'#38b48d'} },
-        { value: 580, name: "充电杆" ,itemStyle:{color:'#4ebcd2'} },
-      ],
+function initEchart() {
+  var myChart = echarts.init(chartRef.value);
+
+  // 绘制图表
+  myChart.setOption({
+    title: {
+      text: "ECharts 入门示例",
     },
-  ],
-};
-useChart(chartRef2, option2);
+    tooltip: {},
+    xAxis: {
+      data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+    },
+    yAxis: {},
+    series: [
+      {
+        name: "销量",
+        type: "bar",
+        data: [5, 20, 36, 10, 10, 20],
+      },
+    ],
+  });
+}
+
+onMounted(()=>{
+  initEchart();
+})
 </script>
 <style lang="less" scoped>
 .title {
@@ -337,3 +302,4 @@ useChart(chartRef2, option2);
   text-align: center;
 }
 </style>
+```
