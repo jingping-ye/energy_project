@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <!-- <el-row>
     <el-col :span="18">
       <el-card>
         <div class="title">
@@ -142,7 +142,8 @@
       </el-card>
     </el-col>
     <el-col :span="6"></el-col>
-  </el-row>
+  </el-row> -->
+  <div>H</div>
 </template>
 <script setup lang="ts">
 // 今日设备运行状态
@@ -165,6 +166,7 @@ import * as echarts from "echarts";
 // hooks
 import { useChart } from "@/hooks/useChart";
 import { Bottom } from "@element-plus/icons-vue";
+import { getChartData } from "@/api/dashboard.api";
 
 const commonFunc = [
   {
@@ -203,72 +205,82 @@ const commonFunc = [
 const chartRef = ref(null);
 const option1 = {
   title: {
-    text: '电量统计',
-    textStyle:{
-      fontSize:14,
-    }
+    text: "电量统计",
+    textStyle: {
+      fontSize: 14,
+    },
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: "axis",
   },
   legend: {
-    data: ['充电量', '充电时长', '充电功率']
+    data: ["充电量", "充电时长", "充电功率"],
   },
   xAxis: {
-    type: 'category',
+    type: "category",
     boundaryGap: false,
-    data: ['13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00','20:00','21:00']
+    data: [
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+    ],
   },
   yAxis: {
-    type: 'value',
-    axisLabel:{
-      formatter:'{value} kw'
-    }
+    type: "value",
+    axisLabel: {
+      formatter: "{value} kw",
+    },
   },
   series: [
     {
-      name: '充电量',
-      type: 'line',
-      smooth:true,
-      data: [20,50,30,70,60,80,40,60,50],
-      lineStyle:{
-        width:3,
+      name: "充电量",
+      type: "line",
+      smooth: true,
+      data: [20, 50, 30, 70, 60, 80, 40, 60, 50],
+      lineStyle: {
+        width: 3,
       },
-      itemStyle:{
-        color:"purple",
-        shadowBlur:3,
-        shadowColor:'rgba(0,255,0,0.5)'
-      }
+      itemStyle: {
+        color: "purple",
+        shadowBlur: 3,
+        shadowColor: "rgba(0,255,0,0.5)",
+      },
     },
     {
-      name: '充电时长',
-      type: 'line',
-      smooth:true,
-      data: [40,60,50,80,70,90,60,70,80],
-      lineStyle:{
-        width:3,
+      name: "充电时长",
+      type: "line",
+      smooth: true,
+      data: [40, 60, 50, 80, 70, 90, 60, 70, 80],
+      lineStyle: {
+        width: 3,
       },
-      itemStyle:{
-        color:"lightgreen",
-        shadowBlur:3,
-        shadowColor:'rgba(0,255,0,0.5)'
-      }
+      itemStyle: {
+        color: "lightgreen",
+        shadowBlur: 3,
+        shadowColor: "rgba(0,255,0,0.5)",
+      },
     },
     {
-      name: '充电功率',
-      type: 'line',
-      smooth:true,
-      data: [30,40,60,50,70,20,30,40,60],
-      lineStyle:{
-        width:3,
+      name: "充电功率",
+      type: "line",
+      smooth: true,
+      data: [30, 40, 60, 50, 70, 20, 30, 40, 60],
+      lineStyle: {
+        width: 3,
       },
-      itemStyle:{
-        color:"skyblue",
-        shadowBlur:3,
-        shadowColor:'rgba(0,255,0,0.5)'
-      }
+      itemStyle: {
+        color: "skyblue",
+        shadowBlur: 3,
+        shadowColor: "rgba(0,255,0,0.5)",
+      },
     },
-  ]
+  ],
 };
 useChart(chartRef, option1);
 
@@ -291,7 +303,7 @@ const option2 = {
       },
       emphasis: {
         label: {
-          show:false,
+          show: false,
           fontSize: 40,
           fontWeight: "bold",
         },
@@ -300,14 +312,54 @@ const option2 = {
         show: false,
       },
       data: [
-        { value: 1048, name: "充电桩",itemStyle:{color:'#4366b5'} },
-        { value: 735, name: "充电站" ,itemStyle:{color:'#38b48d'} },
-        { value: 580, name: "充电杆" ,itemStyle:{color:'#4ebcd2'} },
+        { value: 1048, name: "充电桩", itemStyle: { color: "#4366b5" } },
+        { value: 735, name: "充电站", itemStyle: { color: "#38b48d" } },
+        { value: 580, name: "充电杆", itemStyle: { color: "#4ebcd2" } },
       ],
     },
   ],
 };
 useChart(chartRef2, option2);
+
+async function getChartDataRequest() {
+  console.log("begin inner async"); // 2
+  try {
+    console.log("begin await"); // 3
+    let result = await getChartData();
+    console.log("end await"); // 6
+  } catch (err) {
+    console.log("err", err);
+  }
+  console.log("end inner async"); // 4
+}
+
+console.log("begin async");  // 1
+getChartDataRequest();
+console.log("end async");  // 5
+
+// async function getChartDataRequest() {
+//   console.log("inner async"); // 2
+//   try {
+//     console.log("begin await"); // 3
+//     let result = await getChartData();
+//     console.log("end await"); // 5
+//     // console.log("result", result);
+//   } catch (err) {
+//     console.log("err", err);
+//   }
+//   console.log("end async"); // 4
+//   // try {
+//   //   let result = await getChartData();
+//   // } catch (err) {
+//   //   console.log("err", err);
+//   // }
+//   // // let result = await getChartData();
+//   // console.log("123");
+// }
+
+// console.log("begin async"); // 1
+// getChartDataRequest();
+// console.log("end async"); // 6
 </script>
 <style lang="less" scoped>
 .title {
