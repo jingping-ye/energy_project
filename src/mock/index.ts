@@ -163,7 +163,6 @@ const menulist2 = [
 Mock.mock('https://www.demo.com/login', 'post', (option: any) => {
   // 前端发送过来的参数 options.body，纯字符串
   const { username, password } = JSON.parse(option.body)['params'];
-  console.log(option.body);
   if (username === 'admin' && password === '666666') {
     return {
       code: 200,

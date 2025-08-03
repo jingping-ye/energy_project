@@ -2,15 +2,16 @@ import type {Ref} from 'vue'; // 写不写type都可以
 import {onBeforeUnmount, onMounted, ref,markRaw} from 'vue';
 import * as echarts from 'echarts';
 
-export function useChart(chartRef:Ref<HTMLElement|null>,initialOptions:any){
+export function useChart(chartRef:Ref<HTMLElement|null>,setChartData:any){
     const chartInstance = ref<echarts.ECharts|null>(null);
-    const chartOptions = ref(initialOptions);
+    // const chartOptions = ref(initialOptions);
 
-    const initChart = () => {
+    const initChart = async () => {
         if(chartRef.value){
             // 初始化实例
             chartInstance.value = markRaw(echarts.init(chartRef.value));
-            chartInstance.value.setOption(chartOptions.value);
+            const result = await setChartData();
+            chartInstance.value.setOption(result);
         }
     }
 
