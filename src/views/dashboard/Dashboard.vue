@@ -1,7 +1,7 @@
 <template>
-  <el-row>
+  <el-row :gutter="20">
     <el-col :span="18">
-      <el-card>
+      <!-- <el-card>
         <div class="title">
           <h3>今日设备运行状态</h3>
           <p class="update-time">更新时间：2025年06月27日</p>
@@ -132,16 +132,56 @@
           <h1>能源统计</h1>
         </template>
         <el-row>
-          <el-col :span="6">
+          <el-col :span="8">
             <div ref="chartRef2" style="width: 100%; height: 400px"></div>
           </el-col>
-          <el-col :span="18">
+          <el-col :span="16">
             <div ref="chartRef" style="width: 100%; height: 400px"></div>
           </el-col>
         </el-row>
+      </el-card> -->
+    </el-col>
+    <el-col :span="6">
+      <!-- <el-card>
+        <template #header> 设备总览 </template>
+        <div style="width: 100%; height: 240px" ref="chartRef3"></div>
+      </el-card> -->
+      <el-card>
+        <template #header>营收统计表</template>
+        <ul>
+          <li class="revenue-item" v-for="item in  revenueList" :key="item.rank">
+            <span class="item-rank">{{ item.rank }}</span>
+            <span class="item-title">{{ item.city }}</span>
+            <span class="item-num">{{ item.num }}</span>
+            <span class="item-percent">{{item.ratio}}</span>
+            <span class="item-icon">
+              <el-icon color="#67C23A" v-if="item.trend>0"><CaretTop /></el-icon>
+              <el-icon color="#F56C6C" v-else-if="item.trend<0"><CaretBottom /></el-icon>
+              <el-icon v-else>
+                -
+              </el-icon>
+            </span>
+          </li>
+        </ul>
+      </el-card>
+      <el-card class="mt">
+        <template #header> 故障报警 </template>
+        <el-timeline style="max-width: 600px">
+          <el-timeline-item
+            v-for="(item,index) in warningList"
+            :key="index"
+            :timestamp="item.time"
+            placement="top"
+            :hollow="true"
+            :type="item.status === 'abnormal'?'warning':'danger'"
+          >
+            <el-card>
+              <h4>{{ item.title }}</h4>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
       </el-card>
     </el-col>
-    <el-col :span="6"></el-col>
   </el-row>
 </template>
 <script setup lang="ts">
@@ -159,13 +199,16 @@ import money from "@/assets/money.png";
 import daily from "@/assets/daily.png";
 
 // utils
-import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
-import * as echarts from "echarts";
+import { ref, reactive } from "vue";
 
 // hooks
 import { useChart } from "@/hooks/useChart";
-import { Bottom } from "@element-plus/icons-vue";
-import { getChartData } from "@/api/dashboard.api";
+import { Bottom, CaretBottom } from "@element-plus/icons-vue";
+import {
+  getLineChartData,
+  getPieChartData,
+  getRadarChartData,
+} from "@/api/dashboard.api";
 
 const commonFunc = [
   {
@@ -200,45 +243,86 @@ const commonFunc = [
   },
 ];
 
-// 基于准备好的dom，初始化echarts实例
-const chartRef = ref(null);
-// const option1 = ;
-// useChart(chartRef, option1);
-
-const option2 = {
-  legend: {
-    bottom: 0,
-  },
-  series: [
-    {
-      type: "pie",
-      radius: ["50%", "70%"],
-      avoidLabelOverlap: false,
-      label: {
-        show: false,
-        position: "center",
-      },
-      emphasis: {
-        label: {
-          show: false,
-          fontSize: 40,
-          fontWeight: "bold",
-        },
-      },
-      labelLine: {
-        show: false,
-      },
-      data: [
-        { value: 1048, name: "充电桩", itemStyle: { color: "#4366b5" } },
-        { value: 735, name: "充电站", itemStyle: { color: "#38b48d" } },
-        { value: 580, name: "充电杆", itemStyle: { color: "#4ebcd2" } },
+const chartRef3 = ref(null);
+async function setRadarChartData() {
+  let option = reactive({
+    radar: {
+      indicator: [
+        { name: "闲置数", max: 65 },
+        { name: "使用数", max: 160 },
+        { name: "故障数", max: 300 },
+        { name: "维修数", max: 380 },
+        { name: "更换数", max: 520 },
+        { name: "报废数", max: 250 },
       ],
     },
-  ],
-};
+    series: [
+      {
+        name: "设备总览",
+        type: "radar",
+        data: [
+          {
+            value: [],
+            name: "设备总览",
+          },
+        ],
+      },
+    ],
+  });
+
+  let result = await getRadarChartData();
+  option.series[0].data[0]["value"] = result.list;
+  return option;
+}
+useChart(chartRef3, setRadarChartData);
 
 const chartRef2 = ref(null);
+async function setPieChartData() {
+  let option = reactive({
+    legend: {
+      top: "bottom",
+    },
+    // 其实不写也行
+    tooltip: {
+      trigger: "item",
+      formatter: "{a}<br/>{b}:{c}",
+    },
+    series: [
+      {
+        name: "营收占比",
+        type: "pie",
+        radius: ["30%", "50%"],
+        center: ["50%", "50%"],
+        roseType: "area",
+        data: [],
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: "18",
+            fontWeight: "bold",
+          },
+        },
+      },
+    ],
+    graphic: {
+      type: "text",
+      left: "center",
+      top: "center",
+      style: {
+        text: "营收占比",
+        fontSize: 16,
+        fill: "#333",
+      },
+    },
+  });
 
+  let result = await getPieChartData();
+  option.series[0].data = result.list;
+  return option;
+}
+useChart(chartRef2, setPieChartData);
+
+const chartRef = ref(null);
 async function setLineChartData() {
   let option = reactive({
     title: {
@@ -319,22 +403,88 @@ async function setLineChartData() {
       },
     ],
   });
-  interface chartData {
-    name:string;
-    data:number[];
-  }
-  let result = await getChartData();
+
+  let result = await getLineChartData();
   const list = result.list;
   option.legend.data = list.map((item) => item.name);
-  option.series = option.series.map(
-    (item, index) => {
-      item.data = list[index]["data"];
-      return item;
-    }
-  );
+  option.series = option.series.map((item, index) => {
+    item.data = list[index]["data"];
+    return item;
+  });
   return option;
 }
 useChart(chartRef, setLineChartData);
+
+const revenueList = reactive([
+  {
+    rank: 1,
+    city: "广州",
+    num: "52,457",
+    ratio: "24%",
+    trend: 0.1,
+  },
+  {
+    rank: 2,
+    city: "上海",
+    num: "323,234",
+    ratio: "24%",
+    trend: -0.1,
+  },
+  {
+    rank: 3,
+    city: "佛山",
+    num: "192,255",
+    ratio: "24%",
+    trend: 0,
+  },
+  {
+    rank: 4,
+    city: "珠海",
+    num: "17,540",
+    ratio: "24%",
+    trend: 0.1,
+  },
+  {
+    rank: 5,
+    city: "深圳",
+    num: "662,337",
+    ratio: "24%",
+    trend: -0.1,
+  },
+  {
+    rank: 6,
+    city: "厦门",
+    num: "22,941",
+    ratio: "24%",
+    trend: 0.1,
+  },
+  {
+    rank: 7,
+    city: "长沙",
+    num: "565,221",
+    ratio: "24%",
+    trend: 0.1,
+  },
+]);
+
+const warningList = reactive([
+  {
+    time:"2025/06/01",
+    title:"充电桩1号故障",
+    status:"abnormal", // 异常
+  },
+  {
+    time:"2025/06/05",
+    title:"充电站2号停止运行",
+    status:"fatal", // 故障
+  },
+  {
+    time:"2025/06/08",
+    title:"充电桩3号故障",
+    status:"abnormal", // 异常
+  },
+])
+
 </script>
 <style lang="less" scoped>
 .title {
@@ -362,5 +512,45 @@ useChart(chartRef, setLineChartData);
 }
 .quick {
   text-align: center;
+}
+.revenue-item {
+  display: flex;
+  padding: 10px 10px;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+.revenue-item:nth-child(even) {
+  background-color: #fcf6ec;
+}
+.item-rank {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  font-weight: bold;
+  border-radius: 50%;
+  text-align: center;
+}
+li:nth-of-type(1) .item-rank {
+  background-color: #5fb634;
+  color: #fff;
+}
+li:nth-of-type(2) .item-rank {
+  background-color: #3593f2;
+  color: #fff;
+}
+li:nth-of-type(3) .item-rank {
+  background-color: #d4983d;
+  color: #fff;
+}
+.item-num {
+  margin-right: 20px;
+}
+.item-percent {
+  margin-right: 10px;
+}
+.item-title {
+  margin-left: 10px;
+  flex-grow: 1;
 }
 </style>
