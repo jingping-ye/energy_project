@@ -17,6 +17,9 @@
 </template>
 <script lang="ts" setup>
 import { Plus } from "@element-plus/icons-vue";
+import type {QueryFormParams} from './type';
+import {getStationListData} from '@/api/chargingStation.api';
+import { onMounted, watch } from "vue";
 const buttonOperationList = [
   {
     name: "el-button",
@@ -36,4 +39,32 @@ const buttonOperationList = [
 function add() {
   console.log("add");
 }
+
+interface Props{
+  queryForm:QueryFormParams,
+}
+const props = defineProps<Props>();
+
+// 监控props数据
+watch(()=>props.queryForm, ()=>{
+  getStationListDataRequest();
+}, {deep:true})
+
+
+/***
+ * HTTP REQUEST
+ * 获取监控电站列表
+ */
+async function getStationListDataRequest(){
+  const requestBody = {
+    ...props.queryForm,
+    currentPage:1,
+    pageSize:10,
+  };
+  let res = await getStationListData(requestBody);
+}
+
+onMounted(()=>{
+  getStationListDataRequest();
+})
 </script>

@@ -1,163 +1,8 @@
 import Mock from "mockjs";
+import { menulist, menulist2, chargingStation } from "./data";
 Mock.setup({
   timeout: "200-600", // 设置延迟时间
 });
-
-// 管理员权限菜单
-const menulist = [
-  {
-    name: "数据看板",
-    url: "/dashboard",
-    icon: "DataLine",
-  },
-  {
-    name: "充电站管理",
-    url: "/charging-station",
-    icon: "Lightning",
-    children: [
-      {
-        name: "充电站监控",
-        url: "/charging-station/monitor",
-        icon: "VideoCamera",
-      },
-      {
-        name: "营收统计",
-        url: "/charging-station/revenue",
-        icon: "DataAnalysis",
-      },
-      {
-        name: "充电桩管理",
-        url: "/charging-station/pile",
-        icon: "Warning",
-      },
-    ],
-  },
-  {
-    name: "电子地图",
-    url: "/map",
-    icon: "MapLocation",
-  },
-  {
-    name: "运营管理",
-    url: "/order",
-    icon: "Files",
-    children: [
-      {
-        name: "订单管理",
-        url: "/order",
-        icon: "DocumentCopy",
-      },
-      {
-        name: "订单详情",
-        url: "/order/detail",
-        icon: "Share",
-      },
-      {
-        name: "计费管理",
-        url: "/order/total",
-        icon: "Money",
-      },
-    ],
-  },
-  {
-    name: "报警管理",
-    url: "/alarm",
-    icon: "Phone",
-  },
-  {
-    name: "会员卡管理",
-    url: "/membership",
-    icon: "Magnet",
-  },
-  {
-    name: "招商管理",
-    url: "/investment",
-    icon: "Document",
-  },
-  {
-    name: "系统设置",
-    url: "/system",
-    icon: "Setting",
-  },
-
-  {
-    name: "个人中心",
-    url: "/personal",
-    icon: "User",
-  },
-];
-//运营专员的菜单
-const menulist2 = [
-  {
-    name: "数据看板",
-    url: "/dashboard",
-    icon: "DataLine",
-  },
-  {
-    name: "充电站管理",
-    url: "/chargingstation",
-    icon: "Lightning",
-    children: [
-      {
-        name: "充电站监控",
-        url: "/charging-station/monitor",
-        icon: "VideoCamera",
-      },
-      {
-        name: "营收统计",
-        url: "/charging-station/revenue",
-        icon: "DataAnalysis",
-      },
-      {
-        name: "充电桩管理",
-        url: "/charging-station/pile",
-        icon: "Warning",
-      },
-    ],
-  },
-  {
-    name: "电子地图",
-    url: "/map",
-    icon: "MapLocation",
-  },
-  {
-    name: "运营管理",
-    url: "/order",
-    icon: "Files",
-    children: [
-      {
-        name: "订单管理",
-        url: "/order",
-        icon: "DocumentCopy",
-      },
-      {
-        name: "订单详情",
-        url: "/order/detail",
-        icon: "Share",
-      },
-      {
-        name: "计费管理",
-        url: "/order/total",
-        icon: "Money",
-      },
-    ],
-  },
-  {
-    name: "报警管理",
-    url: "/alarm",
-    icon: "Phone",
-  },
-  {
-    name: "会员卡管理",
-    url: "/membership",
-    icon: "Magnet",
-  },
-  {
-    name: "个人中心",
-    url: "/personal",
-    icon: "User",
-  },
-];
 
 // 登录接口
 Mock.mock("https://www.demo.com/login", "post", (option: any) => {
@@ -239,5 +84,54 @@ Mock.mock("https://www.demo.com/radarChartData", "get", () => {
     code: 200,
     message: "操作成功",
     list: [42, 30, 200, 350, 500, 180],
+  };
+});
+
+// 充电站监控数据
+Mock.mock("https://www.demo.com/stationList", "post", (options: any) => {
+  // 需要过滤的数据
+  // 每次都重新获取，防止有新增的数据
+  let chargingStationFiltered = JSON.parse(JSON.stringify(chargingStation));
+  const { id, name, status, currentPage, pageSize } = options.body
+    ? JSON.parse(options.body)["params"]
+    : {};
+
+  /*** 过滤 ***/
+  // id
+  if (id) {
+    chargingStationFiltered = chargingStationFiltered.filter(
+      (item) => item.id === id
+    );
+  }
+
+  // 名称
+  if (name) {
+    chargingStationFiltered = chargingStationFiltered.filter((item) =>
+      item.name.includes(name)
+    );
+  }
+
+  // 状态
+  if (status) {
+    chargingStationFiltered = chargingStationFiltered.filter(
+      (item) => item.status === Number(status)
+    );
+  }
+
+  /*** 分页 ***/
+  const total = chargingStation.length;
+  const offsetSize = (currentPage - 1) * pageSize; // 开始记录数
+  const list = chargingStationFiltered.slice(offsetSize, offsetSize + pageSize);
+  return {
+    code: 200,
+    success: true,
+    data: {
+      list: list,
+      pagination: {
+        currentPage,
+        pageSize,
+        total,
+      },
+    },
   };
 });

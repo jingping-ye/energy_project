@@ -5,7 +5,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
-import StationEdit from './components/StationEdit.vue';
+import StationEdit from './components/ModalEdit.vue';
 
 const dialogVisible = ref(true);
 function openDialog() {

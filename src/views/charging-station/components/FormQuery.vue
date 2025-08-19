@@ -35,6 +35,12 @@
 </template>
 <script setup lang="ts">
 import { reactive } from "vue";
+import type {QueryFormParams} from './type';
+
+interface Emits {
+  (e:'refresh', arg1:QueryFormParams): void;
+}
+const emits = defineEmits<Emits>();
 
 
 const statusList = [
@@ -68,7 +74,16 @@ const queryForm = reactive({
 
 // 查询
 function search() {
-  console.log("search......");
+  emitQueryParams();
+}
+
+// 将查询参数抛出
+function emitQueryParams(){
+  const params = {
+    [queryForm.searchType]: queryForm.searchStr,
+    status:queryForm.status,
+  };
+  emits("refresh", params);
 }
 
 // 重置
@@ -76,5 +91,6 @@ function reset() {
   queryForm.searchStr = "";
   queryForm.searchType = "name";
   queryForm.status = "";
+  emitQueryParams();
 }
 </script>
